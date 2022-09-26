@@ -1,0 +1,508 @@
+openapi: 3.0.1
+info :
+  title: "twitter"
+  version : "1.0"
+  contact:
+      name : "Souvik"
+      email: "deysouvik2014@gmail.com"
+servers:
+  - url: '//localhost:8083/api/v1.0/tweets'
+paths:
+  "/register/":
+    post:
+      tags: 
+        - Registration and Login
+      description: Register as new user
+      operationId: userRegistration
+      requestBody:
+        content:
+          application/json:
+            schema:
+               $ref: '#/components/schemas/userDetails'
+        required: true
+      responses: 
+        200:
+          description: "success token"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/success'
+        500:
+          description: 'internal server error'
+        400:
+            description: "error details"
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/components/schemas/error'
+  /login:
+    post:
+      tags:
+        - Registration and Login
+      description: Login as old user
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+             $ref: '#/components/schemas/credential'
+      responses:
+        200:
+          description: 'success token'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/success'
+        500:
+          description: "internal server error"
+        400:
+            description: "error details"
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/components/schemas/error'
+  /{username}/forgot:
+      get:
+        tags:
+        - Registration and Login
+        description: Forgot password
+        operationId: resetPassword
+        parameters:
+          - name: username
+            in: path
+            required: true
+            schema:
+              type: string
+        responses:
+          200:
+            description: "success"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/success"
+          500:
+            description: "internal server error"
+          400:
+            description: "error details"
+            content:
+              application/json:
+                  schema:
+                    $ref: "#/components/schemas/error"
+  /{username}/add:
+    post:
+      tags:
+        - upsert tweet
+      description: Post new tweet
+      operationId: addPost
+      parameters:
+        - $ref: "#/components/parameters/tokenDetail"
+        - $ref: "#/components/parameters/username"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/post"
+      responses:
+        200:
+            description: "success"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/success"
+        500:
+            description: "internal server error"
+        400:
+            description: "error details"
+            content:
+              application/json:
+                  schema:
+                    $ref: "#/components/schemas/error"
+  /{username}/update/{id}:
+    post:
+      tags:
+        - upsert tweet
+      description: Update tweet
+      operationId: editPost
+      parameters:
+        - $ref: "#/components/parameters/tokenDetail"
+        - $ref: "#/components/parameters/username"
+        - $ref: "#/components/parameters/tweetId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/post"
+      responses:
+        200:
+            description: "success"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/success"
+        500:
+            description: "internal server error"
+        400:
+            description: "error details"
+            content:
+              application/json:
+                  schema:
+                    $ref: "#/components/schemas/error"
+  /{username}/delete/{id}:
+    delete:
+      tags:
+        - upsert tweet
+      description: Delete tweet
+      operationId: deletePost
+      parameters:
+        - $ref: "#/components/parameters/tokenDetail"
+        - $ref: "#/components/parameters/username"
+        - $ref: "#/components/parameters/tweetId"
+      responses:
+        200:
+            description: "success"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/success"
+        500:
+            description: "internal server error"
+        400:
+            description: "error details"
+            content:
+              application/json:
+                  schema:
+                    $ref: "#/components/schemas/error"
+  /{username}/like/{id}:
+    put:
+      tags:
+        - interaction
+      description: Like tweet
+      operationId: addLike
+      parameters:
+        - $ref: "#/components/parameters/tokenDetail"
+        - $ref: "#/components/parameters/username"
+        - $ref: "#/components/parameters/tweetId"
+        - $ref: "#/components/parameters/flag"
+      responses:
+        200:
+            description: "success"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/like"
+        500:
+            description: "internal server error"
+        400:
+            description: "error details"
+            content:
+              application/json:
+                  schema:
+                    $ref: "#/components/schemas/error"
+  /reply/{id}:
+    get:
+      tags:
+        - interaction
+      description: get all reply
+      operationId: getReply
+      parameters:
+          - $ref: "#/components/parameters/tokenDetail"
+          - $ref: "#/components/parameters/tweetId"
+      responses:
+          200:
+            description: "success"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/allReply"
+          500:
+              description: "internal server error"
+          400:
+              description: "error details"
+              content:
+                application/json:
+                    schema:
+                      $ref: "#/components/schemas/error"
+  /{username}/reply/{id}:
+    post:
+      tags:
+        - interaction
+      description: Reply to tweet
+      operationId: setReply
+      parameters:
+        - $ref: "#/components/parameters/tokenDetail"
+        - $ref: "#/components/parameters/username"
+        - $ref: "#/components/parameters/tweetId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/post"
+      responses:
+        200:
+            description: "success"
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/success"
+        500:
+            description: "internal server error"
+        400:
+            description: "error details"
+            content:
+              application/json:
+                  schema:
+                    $ref: "#/components/schemas/error"
+  /all:
+    get:
+      tags:
+        - search
+      description: 'Get all tweets'
+      operationId: getAllTweet
+      parameters:
+        - $ref: '#/components/parameters/tokenDetail'
+        - $ref: '#/components/parameters/page'
+      responses:
+        200:
+            description: 'success'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/postList'
+        500:
+            description: 'internal server error'
+        400:
+            description: 'error details'
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/components/schemas/error'
+  /users/all:
+    get:
+      tags:
+        - search
+      description: Get all users
+      operationId: getAllUser
+      parameters:
+        - $ref: '#/components/parameters/tokenDetail'
+        - $ref: '#/components/parameters/page'
+      responses:
+        200:
+            description: 'all user list'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/userList'
+        500:
+            description: 'internal server error'
+        400:
+            description: 'error details'
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/components/schemas/error'
+  /usernames:
+    get:
+      tags:
+        - search
+      description: 'get all tweet  of the users'
+      operationId: getAllTweetByAUserName
+      parameters:
+        - $ref: '#/components/parameters/tokenDetail'
+        - $ref: '#/components/parameters/user'
+        - $ref: '#/components/parameters/page'
+      responses:
+        200:
+            description: 'all tweet of owner'
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/postList'
+        500:
+            description: 'internal server error'
+        400:
+            description: 'error details'
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/components/schemas/error'
+  /user/search/{username}:
+    get:
+      tags:
+        - search
+      description: 'Search by username'
+      operationId: getAllUserBySearchedUserName
+      parameters:
+        - $ref: '#/components/parameters/username'
+        - $ref: '#/components/parameters/tokenDetail'
+        - $ref: '#/components/parameters/page'
+      responses:
+        200:
+            description: all user list
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/userList'
+        500:
+            description: 'internal server error'
+        400:
+            description: 'error details'
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/components/schemas/error'
+components:
+  parameters:
+    page:
+      name: page
+      description: no of content to show
+      schema:
+        type: integer
+        format: int32
+      in: header
+      
+    tweetId:
+      description: tweet post id
+      required: true
+      name: id
+      schema:
+        type: string
+      in: path
+    flag:
+      description: to check like add or remove
+      required: true
+      name: flag
+      schema:
+        type: boolean
+      in: query
+    username:
+      name: username
+      description: user id
+      in: path
+      required: true
+      schema:
+        type: string
+    tokenDetail:
+      name: Token-key
+      in: header
+      schema:
+        type: string
+    user:
+      name: userid
+      schema:
+        type: string
+      in: query
+      required: true
+  schemas:
+    userprofile:
+      title: user profile details
+      type: object
+      properties:
+        userid: 
+          type: string
+    
+    userList:
+      title: user List
+      type: array
+      items: 
+        $ref: '#/components/schemas/user'
+    
+    postList:
+      title: post List
+      type: array
+      items: 
+         $ref: '#/components/schemas/postDetails'
+    
+    allReply:
+      title: all tweet details
+      type: array
+      items: 
+         $ref: '#/components/schemas/replyDetails'
+        
+    replyDetails:
+      title: user
+      type: object
+      properties:
+        _id:
+            description: post id
+            type: string      
+        userId:
+            type: string
+        reply:
+          type: string
+
+    success:
+      title: 2XX
+      type: string
+    
+    like:
+      title: like Count
+      type: integer
+      format: int32
+          
+    error:
+      title: Error
+      type: string
+      
+    post:
+      title: Post
+      type: object
+      properties:
+        post:
+          type: string
+      
+    credential:
+      title: credential
+      type: object
+      properties:
+        Login Id:
+          type: string
+        Password:
+          type: string
+
+    postDetails:
+      title: user
+      type: object
+      properties:
+        _id:
+            description: post id
+            type: string      
+        userId:
+            type: string
+        postData:
+          type: string
+        like:
+          type: integer
+          format: int32
+        time:
+          type: string
+          
+    userDetails:
+      title: user
+      type: object
+      properties:
+        First Name:
+            type: string
+        last name:
+            type: string
+        Email:
+          type: string
+        ContactNumber:
+          type: integer
+          format: int32
+        cridential:
+            $ref: '#/components/schemas/credential'
+    user:
+      title: user
+      type: object
+      properties:
+        UserId:
+          type: string
+        First Name:
+            type: string
+        last name:
+            type: string
+        Email:
+          type: string
+        ContactNumber:
+          type: integer
+          format: int32
